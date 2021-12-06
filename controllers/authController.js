@@ -101,3 +101,22 @@ exports.postSignup = async (req, res, next) => {
     });
   }
 };
+
+exports.postLogOut = async (req, res, next) => {
+  try {
+    req.user.tokens = req.user.tokens.filter((item) => {
+      return item.token !== req.token;
+    });
+    await req.user.save();
+
+    return res.status(200).json({
+      state: "success",
+      message: "successfully logged out",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      state: "error",
+      message: "an error occurred while trying to logout",
+    });
+  }
+};
