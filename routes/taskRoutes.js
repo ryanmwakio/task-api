@@ -8,4 +8,6 @@ router.get("/tasks", taskController.getAllTasks);
 
 router.post("/task", taskController.postCreateTask);
 
+router.get("/task/:taskId", taskController.getSingleTask);
+
 module.exports = router;

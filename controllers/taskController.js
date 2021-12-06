@@ -16,6 +16,31 @@ exports.getAllTasks = async (req, res, next) => {
   }
 };
 
+exports.getSingleTask = async (req, res, next) => {
+  try {
+    const taskId = req.params.taskId;
+    const task = await Task.findById(taskId);
+
+    if (!task) {
+      return res.status(404).json({
+        state: "error",
+        message: "sorry, could not find this particular task",
+      });
+    }
+
+    return res.status(200).json({
+      state: "success",
+      message: "successfully fetched the task",
+      data: task,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      state: "error",
+      message: err.message,
+    });
+  }
+};
+
 exports.postCreateTask = async (req, res, next) => {
   try {
     const description = req.body.description;

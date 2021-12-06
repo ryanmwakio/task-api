@@ -17,7 +17,30 @@ exports.getAllUsers = async (req, res, next) => {
   }
 };
 
-exports.getSingleUser = (req, res, next) => {};
+exports.getSingleUser = async (req, res, next) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        state: "error",
+        message: "sorry, the user does not exist",
+      });
+    }
+
+    return res.status(200).json({
+      state: "success",
+      message: "successfully found the user",
+      data: user,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      state: "error",
+      message: err.message,
+    });
+  }
+};
 
 exports.postCreateUser = async (req, res, next) => {
   try {
