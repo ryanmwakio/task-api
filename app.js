@@ -5,6 +5,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 
+const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const docsRoutes = require("./routes/docsRoutes");
 const taskRoutes = require("./routes/taskRoutes");
@@ -22,6 +23,7 @@ app.use(bodyParser.json());
 
 //routes
 app.use(docsRoutes);
+app.use("/api/v1", authRoutes);
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", taskRoutes);
 app.use(errorRoutes);
@@ -35,7 +37,7 @@ app.all("*", (req, res, next) => {
 app.use((error, req, res, next) => {
   res.status(501).json({
     status: "error",
-    message: "server error, we are working on resolvingthe issue",
+    message: "server error, we are working on resolving the issue",
   });
 });
 
