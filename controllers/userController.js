@@ -83,3 +83,44 @@ exports.postCreateUser = async (req, res, next) => {
     });
   }
 };
+
+exports.patchUpdateUser = async (req, res, next) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findByIdAndUpdate(userId, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        state: "error",
+        message: "sorry the user does not exist",
+      });
+    }
+
+    return res.status(201).json({
+      state: "success",
+      message: "successfully update the user",
+      data: user,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      state: "error",
+      message:
+        "an error occurred while trying to update the user, ensure you have proper user id and data values submitted",
+    });
+  }
+};
+
+exports.deleteUser = async (req, res, next) => {
+  const userId = req.params.userId;
+
+  const userDestroyed = await User.findByIdAndRemove(userId);
+
+  return res.status(201).json({
+    state: "success",
+    message: "successfully deleted the user",
+    data: userDestroyed,
+  });
+};

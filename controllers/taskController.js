@@ -36,7 +36,8 @@ exports.getSingleTask = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json({
       state: "error",
-      message: err.message,
+      message:
+        "an error occurred while trying to fetch user, ensure you provide a proper user id",
     });
   }
 };
@@ -68,7 +69,48 @@ exports.postCreateTask = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json({
       state: "error",
-      message: err.message,
+      message: "an error occurred while trying to add new task",
     });
   }
+};
+
+exports.patchUpdateTask = async (req, res, next) => {
+  try {
+    const taskId = req.params.taskId;
+
+    const task = await Task.findByIdAndUpdate(taskId, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!task) {
+      return res.status(404).json({
+        state: "error",
+        message: "sorry the user does not exist",
+      });
+    }
+
+    return res.status(201).json({
+      state: "success",
+      message: "successfully update the task",
+      data: task,
+    });
+  } catch (err) {
+    res.status(500).json({
+      state: "error",
+      message: "an error occurred while trying to update task",
+    });
+  }
+};
+
+exports.deleteTask = async (req, res, next) => {
+  const taskId = req.params.taskId;
+
+  const taskDestroyed = await Task.findByIdAndRemove(taskId);
+
+  return res.status(201).json({
+    state: "success",
+    message: "successfully deleted the task",
+    data: taskDestroyed,
+  });
 };
