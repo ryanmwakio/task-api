@@ -19,9 +19,9 @@ exports.getAllUsers = async (req, res, next) => {
   }
 };
 
-exports.getSingleUser = async (req, res, next) => {
+exports.getMyProfile = async (req, res, next) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.user._id;
     const user = await User.findById(userId);
 
     if (!user) {
@@ -44,52 +44,10 @@ exports.getSingleUser = async (req, res, next) => {
   }
 };
 
-exports.postCreateUser = async (req, res, next) => {
+exports.patchUpdateMyProfile = async (req, res, next) => {
   try {
-    const name = req.body.name;
-    const email = req.body.email;
-    const password = req.body.password;
+    const userId = req.user._id;
 
-    const isNameInDatabase = await User.find({ name: name });
-
-    if (isNameInDatabase.length > 0) {
-      return res.status(401).json({
-        state: "error",
-        message: "cannot use name, the name is already taken",
-      });
-    }
-
-    const isEmailInDatabase = await User.find({ email: email });
-    if (isEmailInDatabase.length > 0) {
-      return res.status(401).json({
-        state: "error",
-        message: "sorry the email already in use",
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 12);
-    const newUser = await new User({
-      name: name,
-      email: email,
-      password: hashedPassword,
-    }).save();
-
-    return res.status(201).json({
-      state: "success",
-      message: "user created successfully",
-      data: newUser,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      state: "error",
-      message: err.message,
-    });
-  }
-};
-
-exports.patchUpdateUser = async (req, res, next) => {
-  try {
-    const userId = req.params.userId;
     const user = await User.findByIdAndUpdate(userId, req.body, {
       new: true,
       runValidators: true,
@@ -104,7 +62,7 @@ exports.patchUpdateUser = async (req, res, next) => {
 
     return res.status(201).json({
       state: "success",
-      message: "successfully update the user",
+      message: "successfully updated the user",
       data: user,
     });
   } catch (err) {
@@ -116,8 +74,8 @@ exports.patchUpdateUser = async (req, res, next) => {
   }
 };
 
-exports.deleteUser = async (req, res, next) => {
-  const userId = req.params.userId;
+exports.deleteMyProfile = async (req, res, next) => {
+  const userId = req.user._id;
 
   const userDestroyed = await User.findByIdAndRemove(userId);
 
