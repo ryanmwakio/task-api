@@ -1,12 +1,16 @@
 const Task = require("../models/Task");
+const User = require("../models/User");
 
-exports.getAllTasks = async (req, res, next) => {
+exports.getAllTasksForProfile = async (req, res, next) => {
   try {
-    const allTasks = await Task.find();
+    const user = await User.findById(req.user._id);
+
+    await user.populate("tasks");
+
     return res.status(200).json({
       state: "success",
       message: "successfully fetched tasks",
-      data: allTasks,
+      data: user.tasks,
     });
   } catch (err) {
     return res.status(500).json({
@@ -19,9 +23,17 @@ exports.getAllTasks = async (req, res, next) => {
 exports.getSingleTask = async (req, res, next) => {
   try {
     const taskId = req.params.taskId;
-    const task = await Task.findById(taskId);
+    const userDataAndtasks = await User.findById(req.user._id).populate(
+      "tasks"
+    );
 
-    if (!task) {
+    const tasks = userDataAndtasks.tasks;
+
+    const task = tasks.filter((task) => {
+      return String(task._id) === String(taskId);
+    });
+
+    if (task.length === 0) {
       return res.status(404).json({
         state: "error",
         message: "sorry, could not find this particular task",
@@ -45,7 +57,6 @@ exports.getSingleTask = async (req, res, next) => {
 exports.postCreateTask = async (req, res, next) => {
   try {
     const description = req.body.description;
-    const completed = req.body.completed;
 
     if (!description) {
       return res.json({
@@ -56,11 +67,14 @@ exports.postCreateTask = async (req, res, next) => {
     }
 
     const task = await new Task({
-      description: description,
-      completed: completed,
+      ...req.body,
+      owner: req.user._id,
     });
-
     const newTask = await task.save();
+
+    req.user.tasks = [...req.user.tasks, newTask._id];
+    await req.user.save();
+
     return res.status(201).json({
       state: "success",
       message: "successfully created the task",

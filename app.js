@@ -42,7 +42,7 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(process.env.MONGO_URL_DEV)
+  .connect(process.env.MONGO_URL_PROD)
   .then((result) => {
     console.log("database connected");
 

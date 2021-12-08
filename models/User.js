@@ -29,6 +29,12 @@ const userSchema = new Schema({
       token: { type: String, required: true },
     },
   ],
+  tasks: [{ type: Schema.Types.ObjectId, ref: "Task" }],
+});
+
+userSchema.pre("remove", function (next) {
+  this.tasks.remove({ _id: this.tasks._id }).exec();
+  next();
 });
 
 userSchema.methods.toJSON = function () {

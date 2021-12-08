@@ -13,11 +13,17 @@
         <div
           class="
             uppercase
-            text-green-700 text-sm
-            w-full
+            text-gray-400 text-sm
+            md:w-1/5
             border-b border-gray-600
             pb-2
-            italic
+            bg-gray-600
+            flex
+            align-middle
+            justify-center
+            pt-2
+            rounded-md
+            shadow-md
           "
         >
           Task API version 1.0.0 {...}
@@ -37,7 +43,7 @@
             "
           >
             This are exposed endpoints for CRUD (Create Read Update Delete)
-            functionality for the user model.
+            functionality for the User model.
           </p>
           <p class="text-green-400 text-sm my-2">
             <%= url %>/api/v1/user->the user resource and endpoints
@@ -65,7 +71,8 @@
           </div>
           <div class="text-yellow-500 text-xs p-3">
             ***note that endpoints that alter the database
-            (post/patch/put/delete) require authorization
+            (post/patch/put/delete) require authentication and a few require
+            admin authorization
             <span class="text-xs text-gray-500 underline"
               >(escalated privildges)</span
             >***
@@ -78,10 +85,52 @@
                 >
               </div>
 
-              <span class="text-gray-500 text-sm">//get a single user</span>
-              <div></div>
-              <span class="text-gray-500 text-sm">//get all the users</span>
-              <div></div>
+              <span class="text-gray-500 text-sm">//user management</span>
+              <div>
+                <p class="text-green-500 text-sm">
+                  1) To get all users
+                  <span
+                    class="
+                      text-xs
+                      w-full
+                      flex
+                      align-middle
+                      justify-center
+                      bg-gray-800
+                      p-2
+                    "
+                    ><%= process.env.URL %>/api/v1/users
+                  </span>
+                  the endpoint expects:
+                  <span class="text-xs block"
+                    >{ does not expect any input }</span
+                  ><br />
+                  the returned response are all users without the passwords,
+                  tokens and tasks IDs (Task model refs)
+                </p>
+                <br />
+                <p class="text-green-500 text-sm">
+                  2) To get profile of current logged in user
+                  <span
+                    class="
+                      text-xs
+                      w-full
+                      flex
+                      align-middle
+                      justify-center
+                      bg-gray-800
+                      p-2
+                    "
+                    ><%= process.env.URL %>/api/v1/me
+                  </span>
+                  the endpoint expects:
+                  <span class="text-xs block"
+                    >{ does not expect any input, pass the bearer token }</span
+                  ><br />
+                  the returned response is the current loggedin user
+                </p>
+                <br />
+              </div>
             </div>
 
             <div class="md:border-r md:border-gray-600 p-3">
@@ -90,8 +139,72 @@
                   >post</span
                 >
               </div>
-              <span class="text-gray-500 text-sm">//post or create a user</span>
-              <div></div>
+              <span class="text-gray-500 text-sm">//authentication routes</span>
+              <div>
+                <p class="text-yellow-500 text-sm">
+                  1) To signup / register new user
+                  <span
+                    class="
+                      text-xs
+                      w-full
+                      flex
+                      align-middle
+                      justify-center
+                      bg-gray-800
+                      p-2
+                    "
+                    ><%= process.env.URL %>/api/v1/signup
+                  </span>
+                  the endpoint expects:
+                  <span class="text-xs block">{ name, email, password }</span
+                  ><br />
+                  the returned response is a modeled user plus generated jwt
+                  token and excluding the password.
+                  <span>On signup, you are immediately logged in.</span>
+                </p>
+                <br />
+                <p class="text-yellow-500 text-sm">
+                  2) To signin / login user
+                  <span
+                    class="
+                      text-xs
+                      w-full
+                      flex
+                      align-middle
+                      justify-center
+                      bg-gray-800
+                      p-2
+                    "
+                    ><%= process.env.URL %>/api/v1/login
+                  </span>
+                  the endpoint expects:
+                  <span class="text-xs block">{ email, password }</span><br />
+                  the returned response is the loggedin user plus generated jwt
+                  token and excluding the password.
+                </p>
+                <br />
+                <p class="text-yellow-500 text-sm">
+                  3) To signout / logout user
+                  <span
+                    class="
+                      text-xs
+                      w-full
+                      flex
+                      align-middle
+                      justify-center
+                      bg-gray-800
+                      p-2
+                    "
+                    ><%= process.env.URL %>/api/v1/logout
+                  </span>
+                  the endpoint expects:
+                  <span class="text-xs block">{ pass the Bearer token }</span
+                  ><br />
+                  the returned response is the loggedout user and the jwt token
+                  is destroyed.
+                </p>
+                <br />
+              </div>
             </div>
             <div class="md:border-r md:border-gray-600 p-3">
               <div class="border-b border-gray-600 py-1 border-dotted">
@@ -100,9 +213,32 @@
                 >
               </div>
               <span class="text-gray-500 text-sm"
-                >//To update a user put or patch</span
+                >//patch or put user management</span
               >
-              <div></div>
+              <div>
+                <p class="text-purple-500 text-sm">
+                  1) To update current loggedin user
+                  <span
+                    class="
+                      text-xs
+                      w-full
+                      flex
+                      align-middle
+                      justify-center
+                      bg-gray-800
+                      p-2
+                    "
+                    ><%= process.env.URL %>/api/v1/me
+                  </span>
+                  the endpoint expects:
+                  <span class="text-xs block"
+                    >{ data to be updated e.g name, email , pass the bearer
+                    token}</span
+                  ><br />
+                  the returned response are is the updated user data.
+                </p>
+                <br />
+              </div>
             </div>
             <div class="md:border-r md:border-gray-600 p-3">
               <div class="border-b border-gray-600 py-1 border-dotted">
@@ -113,7 +249,29 @@
               <span class="text-gray-500 text-sm"
                 >//delete user from database</span
               >
-              <div></div>
+              <div>
+                <p class="text-red-500 text-sm">
+                  1) To remove current loggedin user
+                  <span
+                    class="
+                      text-xs
+                      w-full
+                      flex
+                      align-middle
+                      justify-center
+                      bg-gray-800
+                      p-2
+                    "
+                    ><%= process.env.URL %>/api/v1/me
+                  </span>
+                  the endpoint expects:
+                  <span class="text-xs block"
+                    >{ a logged in user, pass the bearer token }</span
+                  ><br />
+                  the returned response is the deleted user data.Remember on delete it cascades to the related tasks.
+                </p>
+                <br />
+              </div>
             </div>
           </div>
         </section>
@@ -121,7 +279,7 @@
         <div class="border-b border-gray-600"></div>
 
         <section class="my-5 shadow-md p-3 border border-green-400 rounded-md">
-          <span class="text-gray-500 text-sm"> //the user endpoints </span>
+          <span class="text-gray-500 text-sm"> //the task endpoints </span>
           <p
             class="
               text-sm
@@ -134,15 +292,15 @@
             "
           >
             This are exposed endpoints for CRUD (Create Read Update Delete)
-            functionality for the user model.
+            functionality for the Task model.
           </p>
           <p class="text-green-400 text-sm my-2">
-            <%= url %>/v1/user->the user resource and endpoints
+            <%= url %>/v1/task->the task resource and endpoints
           </p>
           <span class="text-green-400 text-sm my-3"
-            >modeled user: { name, email, password<span
+            >modeled task: { description, completed }<span
               class="text-xs text-gray-500 underline"
-              >(will not be returned)</span
+              >(completed is a boolean with a default of false)</span
             >
             }</span
           >
@@ -158,11 +316,12 @@
               shadow-md
             "
           >
-            User endpoints
+            Task endpoints
           </div>
           <div class="text-yellow-500 text-xs p-3">
             ***note that endpoints that alter the database
-            (post/patch/put/delete) require authorization
+            (post/patch/put/delete) require authentication and a few require
+            admin authorization
             <span class="text-xs text-gray-500 underline"
               >(escalated privildges)</span
             >***
@@ -175,10 +334,56 @@
                 >
               </div>
 
-              <span class="text-gray-500 text-sm">//get a single user</span>
-              <div></div>
-              <span class="text-gray-500 text-sm">//get all the users</span>
-              <div></div>
+              <span class="text-gray-500 text-sm"
+                >//To get all tasks for the loggedin user</span
+              >
+              <div>
+                <p class="text-green-500 text-sm">
+                  1) To get all tasks for the loggedin user
+                  <span
+                    class="
+                      text-xs
+                      w-full
+                      flex
+                      align-middle
+                      justify-center
+                      bg-gray-800
+                      p-2
+                    "
+                    ><%= process.env.URL %>/api/v1/tasks
+                  </span>
+                  the endpoint expects:
+                  <span class="text-xs block">{ pass the bearer token }</span
+                  ><br />
+                  the returned response are all tasks for the particular
+                  loggedin user
+                </p>
+                <br />
+              </div>
+              
+              <div>
+                <span class="text-gray-500 text-sm">//To get a single task by id</span>
+                <p class="text-green-500 text-sm">
+                  2) To get all tasks for the loggedin user
+                  <span
+                    class="
+                      text-xs
+                      w-full
+                      flex
+                      align-middle
+                      justify-center
+                      bg-gray-800
+                      p-2
+                    "
+                    ><%= process.env.URL %>/api/v1/task/taskId
+                  </span>
+                  the endpoint expects:
+                  <span class="text-xs block">{ pass the bearer token and id of task passed on the route/url }</span
+                  ><br />
+                  the returned response is that specific task if found.
+                </p>
+                <br />
+              </div>
             </div>
 
             <div class="md:border-r md:border-gray-600 p-3">
@@ -187,8 +392,29 @@
                   >post</span
                 >
               </div>
-              <span class="text-gray-500 text-sm">//post or create a user</span>
-              <div></div>
+              <span class="text-gray-500 text-sm">//post or create a task<span>
+              <div>
+                <p class="text-yellow-500 text-sm">
+                  1) To create a task
+                  <span
+                    class="
+                      text-xs
+                      w-full
+                      flex
+                      align-middle
+                      justify-center
+                      bg-gray-800
+                      p-2
+                    "
+                    ><%= process.env.URL %>/api/v1/task
+                  </span>
+                  the endpoint expects:
+                  <span class="text-xs block">{ description, completed }</span
+                  ><br />
+                  the returned response is the created task plus user who created it.
+                </p>
+                <br />
+              </div>
             </div>
             <div class="md:border-r md:border-gray-600 p-3">
               <div class="border-b border-gray-600 py-1 border-dotted">
@@ -199,7 +425,28 @@
               <span class="text-gray-500 text-sm"
                 >//To update a user put or patch</span
               >
-              <div></div>
+              <div>
+                <p class="text-purple-500 text-sm">
+                  1) To update a specific task
+                  <span
+                    class="
+                      text-xs
+                      w-full
+                      flex
+                      align-middle
+                      justify-center
+                      bg-gray-800
+                      p-2
+                    "
+                    ><%= process.env.URL %>/api/v1/task/taskId
+                  </span>
+                  the endpoint expects:
+                  <span class="text-xs block">{ pass the bearer token and id of task passed on the route/url }</span
+                  ><br />
+                  the returned response is an updated version of the task if successful.
+                </p>
+                <br />
+              </div>
             </div>
             <div class="md:border-r md:border-gray-600 p-3">
               <div class="border-b border-gray-600 py-1 border-dotted">
@@ -208,9 +455,30 @@
                 >
               </div>
               <span class="text-gray-500 text-sm"
-                >//delete user from database</span
+                >//delete task from database</span
               >
-              <div></div>
+              <div>
+                <p class="text-red-500 text-sm">
+                  1) To delete a specific task
+                  <span
+                    class="
+                      text-xs
+                      w-full
+                      flex
+                      align-middle
+                      justify-center
+                      bg-gray-800
+                      p-2
+                    "
+                    ><%= process.env.URL %>/api/v1/task/taskId
+                  </span>
+                  the endpoint expects:
+                  <span class="text-xs block">{ pass the bearer token and id of task passed on the route/url }</span
+                  ><br />
+                  the returned response is the deleted task if successful.
+                </p>
+                <br />
+              </div>
             </div>
           </div>
         </section>

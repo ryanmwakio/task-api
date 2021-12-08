@@ -4,7 +4,7 @@ const User = require("../models/User");
 
 exports.getAllUsers = async (req, res, next) => {
   try {
-    const allUsers = await User.find();
+    const allUsers = await User.find().select("-tokens -tasks -_id");
 
     return res.status(200).json({
       state: "success",
