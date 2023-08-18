@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "install": "npm install",
     "build:css": "postcss public/css/tailwind.css -o public/css/styles.css",
     "server": "nodemon app.js"
   },
